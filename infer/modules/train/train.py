@@ -2,6 +2,8 @@ import os
 import sys
 import logging
 
+import torch_optimizer as optim
+
 logger = logging.getLogger(__name__)
 
 now_dir = os.getcwd()
@@ -185,13 +187,13 @@ def run(
     net_d = MultiPeriodDiscriminator(hps.model.use_spectral_norm)
     if torch.cuda.is_available():
         net_d = net_d.cuda(rank)
-    optim_g = torch.optim.AdamW(
+    optim_g = optim.DiffGrad(
         net_g.parameters(),
         hps.train.learning_rate,
         betas=hps.train.betas,
         eps=hps.train.eps,
     )
-    optim_d = torch.optim.AdamW(
+    optim_d = optim.DiffGrad(
         net_d.parameters(),
         hps.train.learning_rate,
         betas=hps.train.betas,
